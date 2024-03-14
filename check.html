@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <title>セキュリティキー入力</title>
+</head>
+<body>
+  <h1>セキュリティキー確認</h1>
+  <input type="password" id="security-key" placeholder="セキュリティキーを入力">
+  <button id="check-key">確認</button>
+
+  <script>
+    document.getElementById('check-key').addEventListener('click', function() {
+      const inputKey = document.getElementById('security-key').value;
+      const correctKey = "20220401"; // ここにセキュリティキーを設定
+
+      if(inputKey === correctKey) {
+        // キーが正しい場合、サインアップページにリダイレクト
+        window.location.href = 'signup.html'; // サインアップページのURLに変更してください
+      } else {
+        alert('セキュリティキーが間違っています。');
+      }
+    });
+  </script>
+</body>
+</html>

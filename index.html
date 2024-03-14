@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BCP App</title>
+  <link rel="stylesheet" href="style.css"> 
+  <style>
+    #myMap {
+      position: relative;
+      width: 100%;
+      height: 400px;
+    }
+  </style>
+   
+   <script src="./config.js"></script>
+   <script type='text/javascript'>
+     function GetMap() {
+       // ここでマップを初期化
+     }
+   </script>
+   <script type='text/javascript'>
+     document.addEventListener("DOMContentLoaded", function() {
+       var script = document.createElement("script");
+       script.src = 'https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=' + config.BING_MAPS_API_KEY;
+       script.async = true;
+       script.defer = true;
+       document.body.appendChild(script);
+     });
+   </script>
+
+<script type='text/javascript'>
+   let map;
+    function GetMap() {
+    var map = new Microsoft.Maps.Map(document.getElementById('myMap'), {
+        center: new Microsoft.Maps.Location(34.618644, 135.7859943),
+        mapTypeId: Microsoft.Maps.MapTypeId.canvasLight,
+        zoom: 11
+    });
+    // ユーザーの現在位置を取得
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            // ここでloc変数を定義
+            var loc = new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude);
+
+            // 現在地にピンを立てる
+            var pin = new Microsoft.Maps.Pushpin(loc);
+            map.entities.push(pin);
+
+            // 地図の中心を現在地に設定
+            map.setView({ center: loc, zoom: 10 });
+        }, function(error) {
+            console.error('Geolocation error: ', error);
+        });
+    } else {
+        alert("Geolocation APIはこのブラウザではサポートされていません。");
+    }
+    
+    // 訪問看護ステーション「まるまる」の位置にピンを立てる
+    const marumaruLocation = new Microsoft.Maps.Location(34.618644, 135.7859943);
+    const marumaruPin = new Microsoft.Maps.Pushpin(marumaruLocation, {
+        text: 'まるまる'
+    });
+    map.entities.push(marumaruPin);
+
+    // 仮のユーザーネームを取得する方法（例: ユーザー入力またはFirebaseからの取得）
+const username = "ユーザー名"; // 実際にはユーザー入力またはFirebaseから取得した値を使用します
+
+// 現在地にピンを立てる際、ユーザーネームを表示
+const userPin = new Microsoft.Maps.Pushpin(loc, { text: username }); // '現在地'の代わりにusernameを使用
+map.entities.push(userPin);
+
+// ユーザーの現在地を取得してFirebaseに保存する
+navigator.geolocation.getCurrentPosition(function(position) {
+    const userLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+        timestamp: new Date().toISOString() // 更新時間
+    };
+
+    // 仮定：ユーザーIDやユーザーネームを既に持っているとします
+    const userId = "ユーザーID"; // 実際のアプリケーションでは動的に設定
+
+    // Firebaseにユーザーの位置情報を保存
+    set(ref(db, 'users/' + userId), userLocation);
+});
+
+const usersRef = ref(db, 'users');
+
+// ユーザーの位置情報の変更をリスン
+onValue(usersRef, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+        const userId = childSnapshot.key;
+        const userLocation = childSnapshot.val();
+
+        // 地図上のユーザーのピンを更新する処理
+        updateMapWithUserLocation(userId, userLocation);
+    });
+});
+
+function updateMapWithUserLocation(userId, userLocation) {
+    // 地図上でuserIdに対応するピンを探す
+    // ピンが見つかれば、その位置と情報を更新
+    // ピンがなければ、新しいピンを作成
+
+    const loc = new Microsoft.Maps.Location(userLocation.lat, userLocation.lng);
+    const pin = new Microsoft.Maps.Pushpin(loc, {
+        title: userId, // またはユーザーネーム
+        subTitle: `更新時間: ${userLocation.timestamp}` // 更新時間をサブタイトルとして表示
+    });
+
+    // 地図上にピンを追加または更新
+    map.entities.push(pin); // 既存のピンの更新または新規ピンの追加
+}
+        // 現在地を取得してピンを置く
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+              const loc = new Microsoft.Maps.Location(
+                  position.coords.latitude,
+                  position.coords.longitude
+              );
+
+              // 現在地にピンを立てる
+              const pin = new Microsoft.Maps.Pushpin(loc, { text: '現在地' });
+              map.entities.push(pin);
+
+              // インフォボックスに現在地情報を表示する
+              const infobox = new Microsoft.Maps.Infobox(loc, {
+                  title: 'あなたはここにいます',
+                  description: 'これがあなたの現在地です。',
+                  visible: true
+              });
+
+              infobox.setMap(map);
+
+              // マップを現在地に移動
+              map.setView({ center: loc });
+          }, function(error) {
+              console.error('Geolocation error: ', error);
+          }, {
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0
+          });
+      } else {
+          alert("このデバイスでは位置情報が利用できません。");
+      }
+    }
+  
+    </script>
+</script>
+   <!-- 設定内容 -->
+</head>
+<body>
+    <header>
+        <h1>訪問看護ステーションまるまる</h1>
+        <h1>BCPシステム</h1>
+        <p>個別支援計画に基づき、緊急訓練時と災害時にはこちらを利用します</p>
+<!-- コンテンツ表示画面 -->
+<div id="myMap" style="position:relative;width:600px;height:400px;"></div>
+    
+<h2>安否確認送信欄</h2>
+<div>
+    名前：<input type="text" id="uname"> 
+    日付：<input type="date" id="day">
+</div>
+<div>
+    <textarea id="text" cols="30" rows="10"></textarea>
+    <button id="send">送信</button>
+</div>
+<div id="output" style="overflow: auto;height: auto;"></div>
+<h1>BCP発令時の対応について</h1>
+<div class="section-sengen">このBCPシステムについて</div>
+        <div class="section-sengent">
+          <p>災害時のBCP（Business Continuity Plan：事業継続計画）発令時に、現在地を基にした地図を使用して安否確認を行うシステムです。
+            </p>
+            <p>地域BCPがあったら
+                避難所に医療従事者が何人かおるはずそこで相談してね</p>
+            <p>1. ユーザーの位置情報の取得と共有
+                位置情報の取得: HTML5 Geolocation APIなどを利用して、ユーザーの現在位置を取得します。
+                位置情報の共有: 取得した位置情報を安全なサーバーに保存し、必要に応じて行政や救助機関と共有できるようにします。
+                2. プライバシーとセキュリティの確保
+                同意の取得: ユーザーから位置情報の取得と共有に関する同意を明示的に取得します。
+                データ保護: 送信されるデータは暗号化し、不正アクセスから保護します。
+                3. 行政との連携方法の確立
+                共有プロトコルの確立: 行政や救助機関との間で、位置情報や安否情報をどのように共有するか、あらかじめ協議しておくことが重要です。
+                標準フォーマットの使用: 情報交換時には、共通のデータフォーマット（例えば、CAP：Common Alerting Protocol）を使用すると、互換性の問題を避けることができます。
+                4. ユーザーインターフェースの工夫
+                直感的な操作: 災害時にはユーザーのストレスが高まるため、シンプルで直感的に操作できるインターフェースが求められます。
+                多言語対応: 災害発生地域によっては、多言語に対応する必要があります。
+                5. システムの耐障害性
+                冗長性の確保: サーバーやネットワークの冗長構成を取り、一部が故障してもシステム全体が停止しないようにします。
+                オフライン対応: ネットワークが利用できない状況でも、ある程度の機能が動作するように、オフライン対応を検討します。
+                6. テストと訓練
+                定期的なテスト: システムの動作を定期的にテストし、災害時に即応できる状態を維持します。
+                訓練の実施: ユーザーや関係機関と協力して、定期的に訓練を行い、実際の災害時の対応をシミュレートします。
+                このようなシステムを構築するには、技術的な実装だけでなく、法律やプライバシーの問題、行政や救助機関との連携など、多岐にわたる検討が必要です。しかし、しっかりと計画し実装されたシステムは、災害時における人命救助や情報共有の大きな力となるでしょう。</p>
+        </div>
+        <div class="section-sengen">訪問看護ステーションまるまるについて</div>
+        <div class="section-sengent">
+          <p>::::::::
+            </p>
+            <p>::::::</p>
+            <p>:::::</p>
+<!--/ コンテンツ表示画面 -->
+
+
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- [ MapTypeId ] https://msdn.microsoft.com/en-us/library/mt712700.aspx -->
+<!-- <script src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=Aoz9fWxOSduCa4Q9RpKVldht9VjioGUOBUibc79YYA1R7XJLv7J3beRaKi0Aom01' async defer></script> -->
+<div id="myMap" style="position:relative;width:600px;height:400px;"></div>
+   
+<!--** 以下Firebase **-->
+<script type="module">
+// firebaseAPIkey.jsからエクスポートしたファイル
+import firebaseConfig from "./firebaseAPIkey.js";
+    // Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getDatabase, set,ref, push,onChildAdded, onChildRemoved,onChildChanged} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);//RealtimeDBに接続
+    const dbRef = ref(db, "chat"); // 例: 'chat'パスへの参照
+    const auth = getAuth(app);
+    const database = getDatabase(app); // データベースインスタンスの取得
+
+
+//  // 送信
+$("#send").on("click", function () {
+  const msg = {
+      uname: $("#uname").val(),
+      // day: $("#day").val(),
+      text: $("#text").val(),
+      datetime: formattedDateTime // 指定した形式で日時を追加
+      // datetime: new Date().toISOString() // 現在の日時をISO形式で取得し、datetimeプロパティに追加
+  }
+  // console.log(msg); //チェックしたら消す
+  const newPostRef = push(dbRef); // ユニークキーを生成
+  set(newPostRef, msg); // "chat"にユニークKEYをつけてオブジェクトデータを登録
+  console.log(newPostRef);//これをみたら、どういう処理なんかわかる！
+});
+
+  // 受診
+  // カテゴリー情報を受信する
+  onChildAdded(dbRef, function (data) {
+  const msg = data.val();
+  const key = data.key; // ユニークキー
+  let h = '<p id="' + key + '">'; // カテゴリー情報はここでは使用しない
+  h += msg.uname + " ";
+  if (msg.datetime) { // datetime プロパティが存在する場合のみ時間を表示
+      h += msg.datetime + " ";
+  }
+  h += '<span contentEditable="true" id="' + key + '_update">' + msg.text + '</span>';
+  h += '<span class="remove" data-key="' + key + '">🚮</span>';
+  h += '<span class="update" data-key="' + key + '">🆙</span>';
+  h += '</p>';
+  $("#output").prepend(h);
+});
+
+// 削除イベント
+$("#output").on("click", ".remove", function () {
+  const key = $(this).attr("data-key");
+  const remove_item = ref(db, "chat/" + key); // 参照先を修正
+  remove(remove_item); //Firebaseデータ削除関数
+});
+
+// 更新イベント
+$("#output").on("click", ".update", function () {
+  const key = $(this).attr("data-key");
+  update(ref(db, "chat/" + key), {
+      text: $("#" + key + '_update').html()
+  });
+});
+
+// 削除処理がFirebase側で実行されたら
+onChildRemoved(dbRef, (data) => {
+  $("#" + data.key).remove(); //DOM操作関数（対象を削除）
+});
+
+// 更新処理がFirebase側で実行されたらイベント発生！
+onChildChanged(dbRef, (data) => {
+  $("#" + data.key + '_update').html(data.val().text);
+  $("#" + data.key + '_update').fadeOut(800).fadeIn(800);
+});
+
+const currentDate = new Date();
+const year = currentDate.getFullYear();
+const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+const day = String(currentDate.getDate()).padStart(2, '0');
+const hours = String(currentDate.getHours()).padStart(2, '0');
+const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+
+
+</script>
+<footer>
+  <small>訪問看護ステーションまるまる</small>
+</footer>
+<script src="main.js"></script>
+</body>
+</html>

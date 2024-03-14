@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>メールアドレス認証デモ</title>
+</head>
+<body>
+    <h1>BCPシステムログイン画面</h1>
+    <p>訪問看護ステーションまるまる利用者の方はこちらからメールアドレスとパスワードで認証をお願いします。</p>
+    <!-- メールアドレスとパスワードの入力フォーム -->
+    <!-- Email and password signup form -->
+
+    <input type="text" id="full-name" placeholder="フルネーム">
+    <input type="email" id="signup-email" placeholder="メールアドレス">
+    <input type="password" id="signup-password" placeholder="パスワード">
+    <button id="sign-up">サインアップ</button>
+    <button id="sign-in">サインイン</button>
+    <button id="reset-password">パスワード再設定</button>
+    <button id="sign-out">サインアウト</button>
+    <!-- FirebaseのJavaScriptファイルを読み込む -->
+<!-- <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js"></script> -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+
+      // firebaseAPIkey.jsからエクスポートしたファイル
+import firebaseConfig from "./firebaseAPIkey.js";
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signOut} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getDatabase, set,ref, push,onChildAdded, onChildRemoved,onChildChanged} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+
+      // // Firebaseアプリの初期化
+      const app = initializeApp(firebaseConfig);
+
+      // // Firebase Authの取得
+      const auth = getAuth();
+
+
+ // サインアップ機能
+document.getElementById('sign-up').addEventListener('click', signUp);
+function signUp(email, password) {
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // 登録成功
+      console.log("ユーザー登録成功:", userCredential.user);
+
+      // Realtime Databaseにフルネームを保存
+      set(ref(getDatabase(), 'users/' + user.uid), {
+        fullName: fullName,
+        email: email
+      }).then(() => {
+        console.log("ユーザー情報をデータベースに保存しました。");
+      }).catch((error) => {
+        console.error("データベース保存エラー:", error);
+      });
+
+
+      // メール検証の送信
+      sendEmailVerification(userCredential.user)
+        .then(() => {
+          // メール送信成功
+          console.log("検証メールを送信しました。");
+        })
+        .catch((error) => {
+          // メール送信エラー
+          console.error("検証メールの送信エラー:", error);
+        });
+    })
+    .catch((error) => {
+      // 登録エラー
+      console.error("サインアップエラー:", error);
+    });
+
+    firebase.auth().createUserWithEmailAndPassword("user@example.com", "password123")
+    .then((userCredential) => {
+        // 成功した場合の処理
+    })
+    .catch((error) => {
+        console.error("サインアップエラー:", error);
+    });
+}
+
+// サインイン機能
+document.getElementById('sign-in').addEventListener('click', signIn);
+
+function signIn() {
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // ログイン成功時の処理は、onAuthStateChangedリスナーで行う
+        }).catch((error) => {
+            console.error('サインインエラー:', error);
+            alert('サインインエラー: ' + error.message);
+        });
+}
+// パスワード再設定機能
+document.getElementById('reset-password').addEventListener('click', resetPassword);
+    function resetPassword() {
+      const email = document.getElementById('signup-email').value;
+      
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          alert('パスワードリセットの手順を記載したメールを送信しました。');
+        })
+        .catch((error) => {
+          console.error('パスワードリセットエラー:', error);
+          alert('パスワードリセットエラー: ' + error.message);
+        });
+    }
+
+
+// 認証状態の監視
+auth.onAuthStateChanged((user) => {
+  if (user && user.emailVerified) {
+    // メールアドレスが認証されたら、index.htmlにリダイレクト
+    window.location.href = 'index.html';
+  }
+});
+      // イベントリスナーを追加
+      document.getElementById('sign-up').addEventListener('click', signUp);
+      document.getElementById('sign-in').addEventListener('click', signIn);
+
+      // サインアウト機能
+document.getElementById('sign-out').addEventListener('click', () => {
+  signOut(auth).then(() => {
+    // サインアウト成功
+    console.log('ユーザーはサインアウトしました。');
+    // 必要に応じて、ログインページへのリダイレクトなどをここで行う
+  }).catch((error) => {
+    // エラー処理
+    console.error('サインアウト時にエラーが発生しました:', error);
+  });
+});
+</script>
+<footer>訪問看護ステーションまるまる</footer>
+</body>
+</html> 
