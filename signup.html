@@ -28,7 +28,7 @@
 import firebaseConfig from "./firebaseAPIkey.js";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signOut} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification,signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signOut} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { getDatabase, set,ref, push,onChildAdded, onChildRemoved,onChildChanged} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
 
@@ -38,50 +38,44 @@ import { getDatabase, set,ref, push,onChildAdded, onChildRemoved,onChildChanged}
       // // Firebase Authの取得
       const auth = getAuth();
 
-
  // サインアップ機能
-document.getElementById('sign-up').addEventListener('click', signUp);
-function signUp(email, password) {
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // 登録成功
-      console.log("ユーザー登録成功:", userCredential.user);
+document.getElementById('sign-up').addEventListener('click', function() {
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    const fullName = document.getElementById('full-name').value; // フルネームを取得
 
-      // Realtime Databaseにフルネームを保存
-      set(ref(getDatabase(), 'users/' + user.uid), {
-        fullName: fullName,
-        email: email
-      }).then(() => {
-        console.log("ユーザー情報をデータベースに保存しました。");
-      }).catch((error) => {
-        console.error("データベース保存エラー:", error);
-      });
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // 登録成功
+            const user = userCredential.user;
+            console.log("ユーザー登録成功:", user);
 
+            // メール検証の送信
+            sendEmailVerification(user)
+                .then(() => {
+                    // メール送信成功
+                    console.log("検証メールを送信しました。");
+                })
+                .catch((error) => {
+                    // メール送信エラー
+                    console.error("検証メールの送信エラー:", error);
+                });
 
-      // メール検証の送信
-      sendEmailVerification(userCredential.user)
+            // Realtime Databaseにフルネームとメールアドレスを保存
+            return set(ref(getDatabase(), 'users/' + user.uid), {
+                fullName: fullName,
+                email: email
+            });
+        })
         .then(() => {
-          // メール送信成功
-          console.log("検証メールを送信しました。");
+            // データベースへの保存成功
+            console.log("ユーザー情報をデータベースに保存しました。");
         })
         .catch((error) => {
-          // メール送信エラー
-          console.error("検証メールの送信エラー:", error);
+            // 登録エラーまたはデータベース保存エラー
+            console.error("エラー発生:", error);
         });
-    })
-    .catch((error) => {
-      // 登録エラー
-      console.error("サインアップエラー:", error);
-    });
-
-    firebase.auth().createUserWithEmailAndPassword("user@example.com", "password123")
-    .then((userCredential) => {
-        // 成功した場合の処理
-    })
-    .catch((error) => {
-        console.error("サインアップエラー:", error);
-    });
-}
+});
 
 // サインイン機能
 document.getElementById('sign-in').addEventListener('click', signIn);
@@ -137,6 +131,7 @@ document.getElementById('sign-out').addEventListener('click', () => {
   });
 });
 </script>
+<script src="main.js"></script>
 <footer>訪問看護ステーションまるまる</footer>
 </body>
 </html> 

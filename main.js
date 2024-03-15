@@ -21,7 +21,6 @@ async function signIn(email, password) {
   function mapsInit(position) {
     const lat = position.coords.latitude;
     const lon = position.coords.longitude;
-    console.log("緯度:", lat, "経度:", lon);
   }
   
   // 位置情報の取得に失敗した場合の処理

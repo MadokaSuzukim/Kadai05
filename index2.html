@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BCP App</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="./config.js"></script>
+  <script src="https://www.bing.com/api/maps/mapcontrol?callback=GetMap" async defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js"></script>
+</head>
+<body>
+    <header>
+        <h1>訪問看護ステーションまるまる</h1>
+        <h1>BCPシステム</h1>
+        <p>個別支援計画に基づき、緊急訓練時と災害時にはこちらを利用します</p>
+    </header>
+
+    <!-- ユーザー名入力フォーム -->
+    <div>
+        <input type="text" id="userName" placeholder="名前を入力">
+        <button id="setUserNameAndPinButton">名前をセットしてピンを表示</button>
+    </div>
+
+    <!-- 地図表示領域 -->
+    <div id="myMap" style="width: 100%; height: 400px;"></div>
+
+    <!-- 以下、安否確認送信欄などの追加情報 -->
+
+    <footer>
+      <small>訪問看護ステーションまるまる</small>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="main.js"></script> <!-- 既存のJavaScriptファイルへのリンク（存在する場合） -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+      import firebaseConfig from "./firebaseAPIkey.js";
+
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+
+      window.GetMap = function () {
+          let map = new Microsoft.Maps.Map(document.getElementById('myMap'), {
+              // ここでの地図の初期設定を行う
+          });
+
+          // "まるまる" のピンを追加
+          const marumaruLocation = new Microsoft.Maps.Location(34.618644, 135.7859943);
+          const marumaruPin = new Microsoft.Maps.Pushpin(marumaruLocation, {
+              text: 'まるまる'
+          });
+          map.entities.push(marumaruPin);
+          map.setView({ center: marumaruLocation, zoom: 11 });
+      };
+
+      document.getElementById('setUserNameAndPinButton').addEventListener('click', () => {
+          // ユーザー名に基づいてピンを設置する機能の実装
+      });
+    </script>
+</body>
+</html>

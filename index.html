@@ -5,20 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BCP App</title>
   <link rel="stylesheet" href="style.css"> 
-  <style>
-    #myMap {
-      position: relative;
-      width: 100%;
-      height: 400px;
-    }
-  </style>
-   
    <script src="./config.js"></script>
-   <script type='text/javascript'>
-     function GetMap() {
-       // ここでマップを初期化
-     }
-   </script>
    <script type='text/javascript'>
      document.addEventListener("DOMContentLoaded", function() {
        var script = document.createElement("script");
@@ -28,128 +15,104 @@
        document.body.appendChild(script);
      });
    </script>
-
+   
 <script type='text/javascript'>
-   let map;
-    function GetMap() {
-    var map = new Microsoft.Maps.Map(document.getElementById('myMap'), {
+  let map; // 地図オブジェクト
+  let loc; // グローバル変数として定義
+  // 地図の初期化と現在地にピンを立てる基本的な機能
+function GetMap() {
+    map = new Microsoft.Maps.Map(document.getElementById('myMap'), {
         center: new Microsoft.Maps.Location(34.618644, 135.7859943),
         mapTypeId: Microsoft.Maps.MapTypeId.canvasLight,
         zoom: 11
     });
-    // ユーザーの現在位置を取得
+    //  訪問看護ステーション「まるまる」の位置にピンを立てる
+    const marumaruLocation = new Microsoft.Maps.Location(34.618644, 135.7859943);
+    const marumaruPin = new Microsoft.Maps.Pushpin(marumaruLocation, {
+        text: 'まるまる'
+    });
+    map.entities.push(marumaruPin);
+    // ユーザーデータを取得し、ピンを設定する関数を呼び出す
+  fetchUserDataAndPin();
+
+    // ユーザーの現在位置を取得してピンを立てる
+    getUserLocationAndPin();
+
+    // データベースからユーザー情報を取得してピンを追加
+    fetchUserDataAndPin();
+}
+function fetchUserDataAndPin() {
+  // ユーザーデータを取得し、ピンを設定する処理を記述する
+}
+// ユーザーの現在位置を取得してピンを立てる
+function getUserLocationAndPin() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-            // ここでloc変数を定義
-            var loc = new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude);
-
-            // 現在地にピンを立てる
-            var pin = new Microsoft.Maps.Pushpin(loc);
-            map.entities.push(pin);
-
-            // 地図の中心を現在地に設定
-            map.setView({ center: loc, zoom: 10 });
+            loc = new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude);
+            addPin(loc, "現在地"); // 現在地にピンを立てる
+            map.setView({ center: loc, zoom: 11 });
         }, function(error) {
             console.error('Geolocation error: ', error);
         });
     } else {
         alert("Geolocation APIはこのブラウザではサポートされていません。");
     }
-    
-    // 訪問看護ステーション「まるまる」の位置にピンを立てる
-    const marumaruLocation = new Microsoft.Maps.Location(34.618644, 135.7859943);
-    const marumaruPin = new Microsoft.Maps.Pushpin(marumaruLocation, {
-        text: 'まるまる'
+    // 位置情報の取得に成功した時の処理
+function mapsInit(position) {
+  const lat = position.coords.latitude;
+  const lon = position.coords.longitude;
+  console.log("緯度:", lat, "経度:", lon);
+
+  // Firebase Realtime Databaseからユーザー情報を取得
+  const dbRef = firebase.database().ref("users");
+  dbRef.once("value", function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      const user = childSnapshot.val();
+      const userName = user.fullName;
+
+      // ピンを作成して地図に追加
+      const pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(lat, lon), {
+        title: userName // fullNameをピンにセット
+      });
+      map.entities.push(pin);
     });
-    map.entities.push(marumaruPin);
-
-    // 仮のユーザーネームを取得する方法（例: ユーザー入力またはFirebaseからの取得）
-const username = "ユーザー名"; // 実際にはユーザー入力またはFirebaseから取得した値を使用します
-
-// 現在地にピンを立てる際、ユーザーネームを表示
-const userPin = new Microsoft.Maps.Pushpin(loc, { text: username }); // '現在地'の代わりにusernameを使用
-map.entities.push(userPin);
-
-// ユーザーの現在地を取得してFirebaseに保存する
-navigator.geolocation.getCurrentPosition(function(position) {
-    const userLocation = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-        timestamp: new Date().toISOString() // 更新時間
-    };
-
-    // 仮定：ユーザーIDやユーザーネームを既に持っているとします
-    const userId = "ユーザーID"; // 実際のアプリケーションでは動的に設定
-
-    // Firebaseにユーザーの位置情報を保存
-    set(ref(db, 'users/' + userId), userLocation);
-});
-
-const usersRef = ref(db, 'users');
-
-// ユーザーの位置情報の変更をリスン
-onValue(usersRef, (snapshot) => {
-    snapshot.forEach((childSnapshot) => {
-        const userId = childSnapshot.key;
-        const userLocation = childSnapshot.val();
-
-        // 地図上のユーザーのピンを更新する処理
-        updateMapWithUserLocation(userId, userLocation);
-    });
-});
-
-function updateMapWithUserLocation(userId, userLocation) {
-    // 地図上でuserIdに対応するピンを探す
-    // ピンが見つかれば、その位置と情報を更新
-    // ピンがなければ、新しいピンを作成
-
-    const loc = new Microsoft.Maps.Location(userLocation.lat, userLocation.lng);
-    const pin = new Microsoft.Maps.Pushpin(loc, {
-        title: userId, // またはユーザーネーム
-        subTitle: `更新時間: ${userLocation.timestamp}` // 更新時間をサブタイトルとして表示
-    });
-
-    // 地図上にピンを追加または更新
-    map.entities.push(pin); // 既存のピンの更新または新規ピンの追加
+  });
 }
-        // 現在地を取得してピンを置く
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-              const loc = new Microsoft.Maps.Location(
-                  position.coords.latitude,
-                  position.coords.longitude
-              );
 
-              // 現在地にピンを立てる
-              const pin = new Microsoft.Maps.Pushpin(loc, { text: '現在地' });
-              map.entities.push(pin);
+// 位置情報の取得に失敗した場合の処理
+function mapsError(error) {
+  let e = "";
+  if (error.code == 1) {
+    e = "位置情報が許可されてません";
+  }
+  if (error.code == 2) {
+    e = "現在位置を特定できません";
+  }
+  if (error.code == 3) {
+    e = "位置情報を取得する前にタイムアウトになりました";
+  }
+  console.error("エラー：", e);
+}
 
-              // インフォボックスに現在地情報を表示する
-              const infobox = new Microsoft.Maps.Infobox(loc, {
-                  title: 'あなたはここにいます',
-                  description: 'これがあなたの現在地です。',
-                  visible: true
-              });
+// 位置情報取得オプション
+const options = {
+  enableHighAccuracy: true,
+  maximumAge: 20000,
+  timeout: 10000
+};
 
-              infobox.setMap(map);
+// 位置情報を取得する処理
+navigator.geolocation.getCurrentPosition(mapsInit, mapsError, options);
+}
 
-              // マップを現在地に移動
-              map.setView({ center: loc });
-          }, function(error) {
-              console.error('Geolocation error: ', error);
-          }, {
-              enableHighAccuracy: true,
-              timeout: 5000,
-              maximumAge: 0
-          });
-      } else {
-          alert("このデバイスでは位置情報が利用できません。");
-      }
-    }
-  
+// 地図上にピンを追加する関数
+function addPin(location, text) {
+    const pin = new Microsoft.Maps.Pushpin(location, { text: text });
+    map.entities.push(pin);
+}
+
     </script>
 </script>
-   <!-- 設定内容 -->
 </head>
 <body>
     <header>
@@ -157,8 +120,10 @@ function updateMapWithUserLocation(userId, userLocation) {
         <h1>BCPシステム</h1>
         <p>個別支援計画に基づき、緊急訓練時と災害時にはこちらを利用します</p>
 <!-- コンテンツ表示画面 -->
-<div id="myMap" style="position:relative;width:600px;height:400px;"></div>
-    
+<!-- ユーザー名を入力するフォーム -->
+
+
+<div id="myMap" style="width: 100%; height: 400px;"></div>
 <h2>安否確認送信欄</h2>
 <div>
     名前：<input type="text" id="uname"> 
@@ -198,10 +163,10 @@ function updateMapWithUserLocation(userId, userLocation) {
         </div>
         <div class="section-sengen">訪問看護ステーションまるまるについて</div>
         <div class="section-sengent">
-          <p>::::::::
+          <p>〒639-1123奈良県大和郡山市筒井町463-1 ふぁみーゆ筒井2階12号
             </p>
-            <p>::::::</p>
-            <p>:::::</p>
+            <p>TEL:050-1807-4162</p>
+            <p>Mail：info@comaru.co.jp</p>
 <!--/ コンテンツ表示画面 -->
 
 
@@ -209,9 +174,17 @@ function updateMapWithUserLocation(userId, userLocation) {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <!-- [ MapTypeId ] https://msdn.microsoft.com/en-us/library/mt712700.aspx -->
 <!-- <script src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=Aoz9fWxOSduCa4Q9RpKVldht9VjioGUOBUibc79YYA1R7XJLv7J3beRaKi0Aom01' async defer></script> -->
-<div id="myMap" style="position:relative;width:600px;height:400px;"></div>
-   
+ <!-- Firebaseの設定 -->
+ <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+
+<!-- Add Firebase products that you want to use -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
 <!--** 以下Firebase **-->
+
+  </script>
 <script type="module">
 // firebaseAPIkey.jsからエクスポートしたファイル
 import firebaseConfig from "./firebaseAPIkey.js";
@@ -219,15 +192,21 @@ import firebaseConfig from "./firebaseAPIkey.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { getDatabase, set,ref, push,onChildAdded, onChildRemoved,onChildChanged} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+// Firebaseアプリの初期化
+const firebaseApp = firebase.initializeApp(firebaseConfig);
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db  = getDatabase(app);//RealtimeDBに接続
+// Realtime Databaseへの参照を取得
+const db = firebaseApp.database();
+
+
+// // Firebaseアプリを初期化
+//     const app = initializeApp(firebaseConfig);
+//     // Firebaseデータベースの参照を取得
+//     const db  = getDatabase(app);//RealtimeDBに接続
     const dbRef = ref(db, "chat"); // 例: 'chat'パスへの参照
-    const auth = getAuth(app);
-    const database = getDatabase(app); // データベースインスタンスの取得
-
-
+//     const auth = getAuth(app);
+//     const database = getDatabase(app); // データベースインスタンスの取得
+ 
 //  // 送信
 $("#send").on("click", function () {
   const msg = {
@@ -294,9 +273,6 @@ const hours = String(currentDate.getHours()).padStart(2, '0');
 const minutes = String(currentDate.getMinutes()).padStart(2, '0');
 const seconds = String(currentDate.getSeconds()).padStart(2, '0');
 const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-
-
 </script>
 <footer>
   <small>訪問看護ステーションまるまる</small>
