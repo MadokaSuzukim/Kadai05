@@ -6,123 +6,12 @@
   <title>BCP App</title>
   <link rel="stylesheet" href="style.css"> 
    <script src="./config.js"></script>
-   <script type='text/javascript'>
-     document.addEventListener("DOMContentLoaded", function() {
-       var script = document.createElement("script");
-       script.src = 'https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=' + config.BING_MAPS_API_KEY;
-       script.async = true;
-       script.defer = true;
-       document.body.appendChild(script);
-     });
-   </script>
-   
-<script type='text/javascript'>
-  let map; // 地図オブジェクト
-  let loc; // グローバル変数として定義
-  // 地図の初期化と現在地にピンを立てる基本的な機能
-function GetMap() {
-    map = new Microsoft.Maps.Map(document.getElementById('myMap'), {
-        center: new Microsoft.Maps.Location(34.618644, 135.7859943),
-        mapTypeId: Microsoft.Maps.MapTypeId.canvasLight,
-        zoom: 11
-    });
-    //  訪問看護ステーション「まるまる」の位置にピンを立てる
-    const marumaruLocation = new Microsoft.Maps.Location(34.618644, 135.7859943);
-    const marumaruPin = new Microsoft.Maps.Pushpin(marumaruLocation, {
-        text: 'まるまる'
-    });
-    map.entities.push(marumaruPin);
-    // ユーザーデータを取得し、ピンを設定する関数を呼び出す
-  fetchUserDataAndPin();
-
-    // ユーザーの現在位置を取得してピンを立てる
-    getUserLocationAndPin();
-
-    // データベースからユーザー情報を取得してピンを追加
-    fetchUserDataAndPin();
-}
-function fetchUserDataAndPin() {
-  // ユーザーデータを取得し、ピンを設定する処理を記述する
-}
-// ユーザーの現在位置を取得してピンを立てる
-function getUserLocationAndPin() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            loc = new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude);
-            addPin(loc, "現在地"); // 現在地にピンを立てる
-            map.setView({ center: loc, zoom: 11 });
-        }, function(error) {
-            console.error('Geolocation error: ', error);
-        });
-    } else {
-        alert("Geolocation APIはこのブラウザではサポートされていません。");
-    }
-    // 位置情報の取得に成功した時の処理
-function mapsInit(position) {
-  const lat = position.coords.latitude;
-  const lon = position.coords.longitude;
-  console.log("緯度:", lat, "経度:", lon);
-
-  // Firebase Realtime Databaseからユーザー情報を取得
-  const dbRef = firebase.database().ref("users");
-  dbRef.once("value", function(snapshot) {
-    snapshot.forEach(function(childSnapshot) {
-      const user = childSnapshot.val();
-      const userName = user.fullName;
-
-      // ピンを作成して地図に追加
-      const pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(lat, lon), {
-        title: userName // fullNameをピンにセット
-      });
-      map.entities.push(pin);
-    });
-  });
-}
-
-// 位置情報の取得に失敗した場合の処理
-function mapsError(error) {
-  let e = "";
-  if (error.code == 1) {
-    e = "位置情報が許可されてません";
-  }
-  if (error.code == 2) {
-    e = "現在位置を特定できません";
-  }
-  if (error.code == 3) {
-    e = "位置情報を取得する前にタイムアウトになりました";
-  }
-  console.error("エラー：", e);
-}
-
-// 位置情報取得オプション
-const options = {
-  enableHighAccuracy: true,
-  maximumAge: 20000,
-  timeout: 10000
-};
-
-// 位置情報を取得する処理
-navigator.geolocation.getCurrentPosition(mapsInit, mapsError, options);
-}
-
-// 地図上にピンを追加する関数
-function addPin(location, text) {
-    const pin = new Microsoft.Maps.Pushpin(location, { text: text });
-    map.entities.push(pin);
-}
-
-    </script>
-</script>
 </head>
 <body>
     <header>
         <h1>訪問看護ステーションまるまる</h1>
         <h1>BCPシステム</h1>
         <p>個別支援計画に基づき、緊急訓練時と災害時にはこちらを利用します</p>
-<!-- コンテンツ表示画面 -->
-<!-- ユーザー名を入力するフォーム -->
-
-
 <div id="myMap" style="width: 100%; height: 400px;"></div>
 <h2>安否確認送信欄</h2>
 <div>
@@ -167,46 +56,26 @@ function addPin(location, text) {
             </p>
             <p>TEL:050-1807-4162</p>
             <p>Mail：info@comaru.co.jp</p>
-<!--/ コンテンツ表示画面 -->
-
 
 <!-- JQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<!-- [ MapTypeId ] https://msdn.microsoft.com/en-us/library/mt712700.aspx -->
-<!-- <script src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=Aoz9fWxOSduCa4Q9RpKVldht9VjioGUOBUibc79YYA1R7XJLv7J3beRaKi0Aom01' async defer></script> -->
- <!-- Firebaseの設定 -->
- <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-
-<!-- Add Firebase products that you want to use -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
 <!--** 以下Firebase **-->
 
-  </script>
 <script type="module">
 // firebaseAPIkey.jsからエクスポートしたファイル
 import firebaseConfig from "./firebaseAPIkey.js";
-    // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import { getDatabase, set,ref, push,onChildAdded, onChildRemoved,onChildChanged} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+import { getDatabase, set,ref, push,onChildAdded, onChildRemoved,onChildChanged, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+console.log(firebaseConfig)
 // Firebaseアプリの初期化
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
 // Realtime Databaseへの参照を取得
-const db = firebaseApp.database();
+const db = getDatabase(app);
+const dbRef = ref(db, "chat"); // 例: 'chat'パスへの参照
+window.GetMap = GetMap;
 
-
-// // Firebaseアプリを初期化
-//     const app = initializeApp(firebaseConfig);
-//     // Firebaseデータベースの参照を取得
-//     const db  = getDatabase(app);//RealtimeDBに接続
-    const dbRef = ref(db, "chat"); // 例: 'chat'パスへの参照
-//     const auth = getAuth(app);
-//     const database = getDatabase(app); // データベースインスタンスの取得
- 
 //  // 送信
 $("#send").on("click", function () {
   const msg = {
@@ -221,8 +90,6 @@ $("#send").on("click", function () {
   set(newPostRef, msg); // "chat"にユニークKEYをつけてオブジェクトデータを登録
   console.log(newPostRef);//これをみたら、どういう処理なんかわかる！
 });
-
-  // 受診
   // カテゴリー情報を受信する
   onChildAdded(dbRef, function (data) {
   const msg = data.val();
@@ -274,6 +141,105 @@ const minutes = String(currentDate.getMinutes()).padStart(2, '0');
 const seconds = String(currentDate.getSeconds()).padStart(2, '0');
 const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 </script>
+<script type='text/javascript'>
+  document.addEventListener("DOMContentLoaded", function() {
+    var script = document.createElement("script");
+    script.src = 'https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=' + config.BING_MAPS_API_KEY;
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+  });
+</script>
+  <!-- </script> -->
+  <script type="text/javascript">
+    function GetMap() {
+        map = new Microsoft.Maps.Map('#myMap', {
+          center: new Microsoft.Maps.Location(34.618644, 135.7859943),
+        mapTypeId: Microsoft.Maps.MapTypeId.canvasLight,
+        zoom: 11
+    });
+    //  訪問看護ステーション「まるまる」の位置にピンを立てる
+    const marumaruLocation = new Microsoft.Maps.Location(34.618644, 135.7859943);
+    const marumaruPin = new Microsoft.Maps.Pushpin(marumaruLocation, {
+        text: 'まるまる'
+    });
+    map.entities.push(marumaruPin);
+
+    // ユーザーの現在位置を取得してピンを立てる
+    getUserLocationAndPin();
+    //  データベースからユーザー情報を取得してピンを追加
+    fetchUserDataAndPin();
+  }
+
+    // ユーザーの現在位置を取得してピンを立てる
+   function getUserLocationAndPin() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            loc = new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude);
+            addPin(loc, "現在地"); // 現在地にピンを立てる
+            map.setView({ center: loc, zoom: 11 });
+        }, function(error) {
+            console.error('Geolocation error: ', error);
+        });
+    } else {
+        alert("Geolocation APIはこのブラウザではサポートされていません。");
+    }
+}
+// ユーザーデータを取得し、ピンを設定する処理を記述する
+function fetchUserDataAndPin() {
+    let dbRef2 = ref(db, "users"); // 'users'パスへの参照
+    onValue(dbRef2, function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            const user = childSnapshot.val();
+            const userName = user.fullName;
+            const lat = user.latitude; // ユーザーの緯度
+            const lon = user.longitude; // ユーザーの経度
+
+            // ピンを作成して地図に追加
+            const location = new Microsoft.Maps.Location(lat, lon);
+            const pin = new Microsoft.Maps.Pushpin(location, {
+                title: userName // ユーザーの名前をピンのタイトルとして設定
+            });
+            map.entities.push(pin);
+        });
+    });
+}
+// 位置情報の取得に成功した時の処理
+function mapsInit(position) {
+  const lat = position.coords.latitude;
+  const lon = position.coords.longitude;
+  console.log("緯度:", lat, "経度:", lon);
+}
+// 位置情報の取得に失敗した場合の処理
+function mapsError(error) {
+  let e = "";
+  if (error.code == 1) {
+    e = "位置情報が許可されてません";
+  }
+  if (error.code == 2) {
+    e = "現在位置を特定できません";
+  }
+  if (error.code == 3) {
+    e = "位置情報を取得する前にタイムアウトになりました";
+  }
+  console.error("エラー：", e);
+}
+
+// 位置情報取得オプション
+const options = {
+  enableHighAccuracy: true,
+  maximumAge: 20000,
+  timeout: 10000
+};
+
+// 位置情報を取得する処理
+navigator.geolocation.getCurrentPosition(mapsInit, mapsError, options);
+// 地図上にピンを追加する関数
+function addPin(location, text) {
+    const pin = new Microsoft.Maps.Pushpin(location, { text: text });
+    map.entities.push(pin);
+}
+  </script>
 <footer>
   <small>訪問看護ステーションまるまる</small>
 </footer>

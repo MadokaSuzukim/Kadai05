@@ -7,7 +7,6 @@ async function signUp(email, password) {
     console.error("サインアップ失敗:", error);
   }
 }
-
 // サインインの関数
 async function signIn(email, password) {
   try {
@@ -22,7 +21,6 @@ async function signIn(email, password) {
     const lat = position.coords.latitude;
     const lon = position.coords.longitude;
   }
-  
   // 位置情報の取得に失敗した場合の処理
   function mapsError(error) {
     let e = "";
@@ -37,18 +35,6 @@ async function signIn(email, password) {
     }
     console.error("エラー：", e);
   }
-  
-  // 位置情報取得オプション
-  const options = {
-    enableHighAccuracy: true,
-    maximumAge: 20000,
-    timeout: 10000
-  };
-  
-  // 位置情報を取得する処理
-  navigator.geolocation.getCurrentPosition(mapsInit, mapsError, options);
-  
-
     // セクションヘッダーがクリックされたときの処理
 document.querySelectorAll('.section-header').forEach(header => {
   header.addEventListener('click', () => {
@@ -56,7 +42,6 @@ document.querySelectorAll('.section-header').forEach(header => {
     content.style.display = content.style.display === 'none' ? 'block' : 'none';
   });
 });
-
 // セクションヘッダーがクリックされたときの処理
 document.querySelectorAll('.section-sengen').forEach(header => {
   header.addEventListener('click', () => {
