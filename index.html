@@ -12,6 +12,8 @@
         <h1>訪問看護ステーションまるまる</h1>
         <h1>BCPシステム</h1>
         <p>個別支援計画に基づき、緊急訓練時と災害時にはこちらを利用します</p>
+        <p>次回実施日</p>
+        <p>2024年7月10日10:30</p>
 <div id="myMap" style="width: 100%; height: 400px;"></div>
 <h2>安否確認送信欄</h2>
 <div>
@@ -29,26 +31,7 @@
           <p>災害時のBCP（Business Continuity Plan：事業継続計画）発令時に、現在地を基にした地図を使用して安否確認を行うシステムです。
             </p>
             <p>地域BCPがあったら
-                避難所に医療従事者が何人かおるはずそこで相談してね</p>
-            <p>1. ユーザーの位置情報の取得と共有
-                位置情報の取得: HTML5 Geolocation APIなどを利用して、ユーザーの現在位置を取得します。
-                位置情報の共有: 取得した位置情報を安全なサーバーに保存し、必要に応じて行政や救助機関と共有できるようにします。
-                2. プライバシーとセキュリティの確保
-                同意の取得: ユーザーから位置情報の取得と共有に関する同意を明示的に取得します。
-                データ保護: 送信されるデータは暗号化し、不正アクセスから保護します。
-                3. 行政との連携方法の確立
-                共有プロトコルの確立: 行政や救助機関との間で、位置情報や安否情報をどのように共有するか、あらかじめ協議しておくことが重要です。
-                標準フォーマットの使用: 情報交換時には、共通のデータフォーマット（例えば、CAP：Common Alerting Protocol）を使用すると、互換性の問題を避けることができます。
-                4. ユーザーインターフェースの工夫
-                直感的な操作: 災害時にはユーザーのストレスが高まるため、シンプルで直感的に操作できるインターフェースが求められます。
-                多言語対応: 災害発生地域によっては、多言語に対応する必要があります。
-                5. システムの耐障害性
-                冗長性の確保: サーバーやネットワークの冗長構成を取り、一部が故障してもシステム全体が停止しないようにします。
-                オフライン対応: ネットワークが利用できない状況でも、ある程度の機能が動作するように、オフライン対応を検討します。
-                6. テストと訓練
-                定期的なテスト: システムの動作を定期的にテストし、災害時に即応できる状態を維持します。
-                訓練の実施: ユーザーや関係機関と協力して、定期的に訓練を行い、実際の災害時の対応をシミュレートします。
-                このようなシステムを構築するには、技術的な実装だけでなく、法律やプライバシーの問題、行政や救助機関との連携など、多岐にわたる検討が必要です。しかし、しっかりと計画し実装されたシステムは、災害時における人命救助や情報共有の大きな力となるでしょう。</p>
+                避難所に医療従事者が何人かおるはず!!!そこで相談してね</p>
         </div>
         <div class="section-sengen">訪問看護ステーションまるまるについて</div>
         <div class="section-sengent">
@@ -148,8 +131,43 @@ const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds
     script.defer = true;
     document.body.appendChild(script);
   });
+  // function saveLocation(lat, lng) {
+  //           // Specify the path where latitude and longitude should be saved in Firebase Realtime Database
+  //           const locationRef = firebase.ref(database, 'place');
+  //           // Data to be saved
+  //           const locationData = {
+  //               latitude: lat,
+  //               longitude: lng,
+  //               timestamp: firebase.database.ServerValue.TIMESTAMP // Saves the server timestamp
+  //           };
+  //           // Save the location data to Firebase
+  //           firebase.set(locationRef, locationData, (error) => {
+  //               if (error) {
+  //                   console.error("Error saving location data:", error);
+  //               } else {
+  //                   console.log("Location data saved successfully.");
+  //               }
+  //           });
+  //       }
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    // Save the latitude and longitude to Firebase
+                    // saveLocation(lat, lng);
+                }, (error) => {
+                    console.error("Geolocation error:", error);
+                });
+            } else {
+                console.error("Geolocation is not supported by this browser.");
+            }
+        }
+        document.addEventListener('DOMContentLoaded', (event) => {
+            getLocation();
+        });
 </script>
-  <!-- </script> -->
   <script type="text/javascript">
     function GetMap() {
         map = new Microsoft.Maps.Map('#myMap', {
@@ -166,16 +184,19 @@ const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds
 
     // ユーザーの現在位置を取得してピンを立てる
     getUserLocationAndPin();
-    //  データベースからユーザー情報を取得してピンを追加
-    fetchUserDataAndPin();
   }
-
+  // 位置情報取得オプション
+const options = {
+  enableHighAccuracy: true,
+  maximumAge: 20000,
+  timeout: 10000
+};
     // ユーザーの現在位置を取得してピンを立てる
    function getUserLocationAndPin() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             loc = new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude);
-            addPin(loc, "現在地"); // 現在地にピンを立てる
+            addPin(loc, ""); // 現在地にピンを立てる
             map.setView({ center: loc, zoom: 11 });
         }, function(error) {
             console.error('Geolocation error: ', error);
@@ -184,27 +205,8 @@ const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds
         alert("Geolocation APIはこのブラウザではサポートされていません。");
     }
 }
-// ユーザーデータを取得し、ピンを設定する処理を記述する
-function fetchUserDataAndPin() {
-    let dbRef2 = ref(db, "users"); // 'users'パスへの参照
-    onValue(dbRef2, function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-            const user = childSnapshot.val();
-            const userName = user.fullName;
-            const lat = user.latitude; // ユーザーの緯度
-            const lon = user.longitude; // ユーザーの経度
-
-            // ピンを作成して地図に追加
-            const location = new Microsoft.Maps.Location(lat, lon);
-            const pin = new Microsoft.Maps.Pushpin(location, {
-                title: userName // ユーザーの名前をピンのタイトルとして設定
-            });
-            map.entities.push(pin);
-        });
-    });
-}
-// 位置情報の取得に成功した時の処理
-function mapsInit(position) {
+ // 位置情報の取得に成功した時の処理
+ function mapsInit(position) {
   const lat = position.coords.latitude;
   const lon = position.coords.longitude;
   console.log("緯度:", lat, "経度:", lon);
@@ -223,14 +225,6 @@ function mapsError(error) {
   }
   console.error("エラー：", e);
 }
-
-// 位置情報取得オプション
-const options = {
-  enableHighAccuracy: true,
-  maximumAge: 20000,
-  timeout: 10000
-};
-
 // 位置情報を取得する処理
 navigator.geolocation.getCurrentPosition(mapsInit, mapsError, options);
 // 地図上にピンを追加する関数
