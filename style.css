@@ -11,10 +11,17 @@ body {
 
 h1 {
   margin: 20px ;
+  text-align: center;
   align-items: auto;
 }
 h2 {
   margin: 10px ;
+  text-align: center;
+  align-items: center;
+}
+p {
+  margin: 10px ;
+  text-align: center;
   align-items: center;
 }
 div {
