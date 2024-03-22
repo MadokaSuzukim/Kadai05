@@ -165,7 +165,7 @@
                     </div>
                     <div class="dance-move" draggable="true"><p></p>
                         <video id="videoStep1" width="320" height="240" controls>
-                          <source src="/2.MOV" type="video/mp4">
+                          <source src="https://firebasestorage.googleapis.com/v0/b/dance-a41fe.appspot.com/o/videos%2F2.MOV?alt=media&token=65ee2165-e038-4f12-9222-1df49a317f39" type="video/mp4">
                           Your browser does not support the video tag.
                         </video>
                       </div>
@@ -204,13 +204,11 @@
             try {
             const uploadResult = await uploadBytes(storageReference, file);
             console.log('Upload successful', uploadResult);
-            getDownloadURL(ref(storage, 'videos/'+file.name))
+            getDownloadURL(ref(storage, 'videos/'+ file.name))
   .then((url) => {
     // `url` is the download URL for 'images/stars.jpg'
 console.log(url);
-    
-
-    // Or inserted into an <img> element
+        // Or inserted into an <img> element
     const img = document.getElementById('videos');
     img.setAttribute('src', url);
   })
@@ -220,14 +218,11 @@ console.log(url);
             console.error('Upload failed:', error);
     }
   }
-
   getDownloadURL(ref(storage, 'videos/1.MOV'))
   .then((url) => {
     // `url` is the download URL for 'images/stars.jpg'
 console.log(url);
-    
-
-    // Or inserted into an <img> element
+        // Or inserted into an <img> element
     const img = document.getElementById('videos');
     img.setAttribute('src', url);
   })
