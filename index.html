@@ -164,20 +164,20 @@
                       </video>
                     </div>
                     <div class="dance-move" draggable="true"><p></p>
-                        <video id="videoStep1" width="320" height="240" controls>
+                        <video id="videoStep2" width="320" height="240" controls>
                           <source src="https://firebasestorage.googleapis.com/v0/b/dance-a41fe.appspot.com/o/videos%2F2.MOV?alt=media&token=65ee2165-e038-4f12-9222-1df49a317f39" type="video/mp4">
                           Your browser does not support the video tag.
                         </video>
                       </div>
                       <div class="dance-move" draggable="true"><p></p>
-                        <video id="videoStep1" width="320" height="240" controls>
-                          <source src="/3.MOV" type="video/mp4">
+                        <video id="videoStep3" width="320" height="240" controls>
+                          <source src="https://firebasestorage.googleapis.com/v0/b/dance-a41fe.appspot.com/o/videos%2F3.MOV?alt=media&token=39079722-7b1d-4cfc-9d25-f2ebde02374a" type="video/mp4">
                           Your browser does not support the video tag.
                         </video>
                       </div>
                       <div class="dance-move" draggable="true"><p></p>
                         <video id="videoStep1" width="320" height="240" controls>
-                          <source src="/4.MOV" type="video/mp4">
+                          <source src="https://firebasestorage.googleapis.com/v0/b/dance-a41fe.appspot.com/o/videos%2F4.MOV?alt=media&token=52692c33-5d4c-4308-b980-d4575dc14f97" type="video/mp4">
                           Your browser does not support the video tag.
                         </video>
                       </div>
@@ -205,15 +205,15 @@
             const uploadResult = await uploadBytes(storageReference, file);
             console.log('Upload successful', uploadResult);
             getDownloadURL(ref(storage, 'videos/'+ file.name))
-  .then((url) => {
-    // `url` is the download URL for 'images/stars.jpg'
-console.log(url);
-        // Or inserted into an <img> element
-    const img = document.getElementById('videos');
-    img.setAttribute('src', url);
-  })
-//   .catch((error) => {
-    // Handle any errors
+            .then((url) => {
+            // `url` is the download URL for 'images/stars.jpg'
+            console.log(url);
+            // Or inserted into an <img> element
+            const img = document.getElementById('videos');
+            img.setAttribute('src', url);
+            })
+              //   .catch((error) => {
+             // Handle any errors
             } catch (error) {
             console.error('Upload failed:', error);
     }

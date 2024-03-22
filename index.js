@@ -20,3 +20,39 @@ function filterVideosByTag(selectedTag) {
         video.style.display = match ? '' : 'none';
     }
 }
+function submitComment(videoId) {
+    const commentInput = document.getElementById(`commentInput-${videoId}`);
+    const commentText = commentInput.value;
+    const commentsRef = firestore.collection('comments');
+  
+    const commentData = {
+      text: commentText,
+      videoId: videoId,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+  
+    commentsRef.add(commentData).then(() => {
+      console.log('コメントを追加しました');
+      commentInput.value = '';
+    }).catch(error => {
+      console.error('コメントの追加に失敗しました:', error);
+    });
+  }
+
+  function loadComments(videoId) {
+    firestore.collection('comments')
+      .where('videoId', '==', videoId)
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(snapshot => {
+        const commentsContainer = document.getElementById(`commentsContainer-${videoId}`);
+        commentsContainer.innerHTML = '';
+  
+        snapshot.forEach(doc => {
+          const comment = doc.data();
+          const commentElement = document.createElement('p');
+          commentElement.textContent = comment.text;
+          commentsContainer.appendChild(commentElement);
+        });
+      });
+  }
+  
