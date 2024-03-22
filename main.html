@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Input Test</title>
+</head>
+<body>
+    <input type="file" id="testFile" accept="video/*">
+    <script>
+        document.getElementById('testFile').addEventListener('change', function() {
+            alert('File has been selected: ' + this.files[0].name);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-image: url('/dance.jpg'); /* ここに画像ファイルへのパスを指定 */
+    background-size: cover; /* 背景画像をカバーとして設定 */
+    background-position: center; /* 背景画像を中央に配置 */
+}
+
+h2{
+    text-align: center;
+}
+.videoItemsContainer {
+    display: flex;
+    gap: 10px; /* 各videoItemの間に20pxの間隔を設ける */
+    justify-content: center; /* 子要素を中央揃えに */
+    align-items: center; /* 子要素の垂直方向の位置を中央揃えに */
+    /* align-items: center; */
+    flex-wrap: wrap; /* 必要に応じて折り返し */
+}
+
+/* .videoItem {
+    /* videoItemのスタイル設定 */
+    /* margin: 10px; 追加で外側の余白を設定する場合 */
+・    /* height: 240px; videoItem の高さを指定 */
+/* } */ 
+
+div{
+    text-align: center;
+    /* display: flex; */
+    /* gap: 20px; 各videoItemの間に20pxの間隔を設ける */
+    /* flex-wrap: wrap; 必要に応じて折り返し */
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+main {
+    padding: 20px;
+}
+
+#choreography-editor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dance-move {
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: grab;
+}
+
+.dance-move:active {
+    cursor: grabbing;
+}
+
+/* style.css */
+.term button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.term button:hover {
+    background-color: #0056b3;
+}
+
+.description {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+footer {
+    background-color: #f2f2f2; /* フッターの背景色 */
+    padding: 20px; /* 内側の余白 */
+    text-align: center; /* テキストを中央揃え */
+}
+.footer-photo {
+    width: 400px; /* 写真の幅 */
+    height: auto; /* 高さは自動調整 */
+    border-radius: 50%; /* 写真を円形に表示 */
+    margin-bottom: 10px; /* 写真とテキストの間の余白 */
+}
+
+.videoItem {
+    margin-bottom: 20px;
+}
+
+.tags {
+    list-style-type: none; /* リストマーカーを非表示にする */
+    padding: 0;
+}
+
+.tags li {
+    display: inline-block; /* タグを横並びに表示 */
+    background-color: #f0f0f0;
+    padding: 5px;
+    margin-right: 5px;
+    border-radius: 5px; /* 角を丸くする */
+}
