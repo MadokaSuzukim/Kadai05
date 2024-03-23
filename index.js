@@ -1,17 +1,17 @@
 
-import firebaseConfig from "./firebaseAPIkey.js";
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js';
-import { getDatabase, ref as databaseRef, set, push, onValue } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
+// import firebaseConfig from "./firebaseAPIkey.js";
+// import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
+// import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js';
+// import { getDatabase, ref as databaseRef, set, push, onValue } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
 
-// Firebaseアプリの初期化
-const app = initializeApp(firebaseConfig);
+// // Firebaseアプリの初期化
+// const app = initializeApp(firebaseConfig);
 
-// Storageサービスの取得
-const storage = getStorage(app);
+// // Storageサービスの取得
+// const storage = getStorage(app);
 
-// Realtime Databaseサービスの取得
-const db = getDatabase(app);
+// // Realtime Databaseサービスの取得
+// const db = getDatabase(app);
 
 // アップロードされた動画を表示する関数
 function displayUploadedVideo(url) {
@@ -61,18 +61,18 @@ window.uploadVideo = async function() {
     }
 };
 
-// 動画一覧の表示
-function displayVideos() {
-    const videosRef = databaseRef(db, 'videos');
-    onValue(videosRef, (snapshot) => {
-        const videosContainer = document.getElementById('videosContainer');
-        videosContainer.innerHTML = ''; // コンテナをクリア
-        snapshot.forEach((childSnapshot) => {
-            const videoData = childSnapshot.val();
-            displayUploadedVideo(videoData.url); // 各動画を表示
-        });
-    });
-}
+// // 動画一覧の表示
+// function displayVideos() {
+//     const videosRef = databaseRef(db, 'videos');
+//     onValue(videosRef, (snapshot) => {
+//         const videosContainer = document.getElementById('videosContainer');
+//         videosContainer.innerHTML = ''; // コンテナをクリア
+//         snapshot.forEach((childSnapshot) => {
+//             const videoData = childSnapshot.val();
+//             displayUploadedVideo(videoData.url); // 各動画を表示
+//         });
+//     });
+// }
 
-document.addEventListener('DOMContentLoaded', displayVideos);
+// document.addEventListener('DOMContentLoaded', displayVideos);
 
