@@ -6,107 +6,94 @@ body, html {
     background-size: cover; /* 背景画像をカバーとして設定 */
     background-position: center; /* 背景画像を中央に配置 */
 }
-
-h2{
+div{
     text-align: center;
 }
+
+h2{
+    display: inline-block; /* タグを横並びに表示 */
+    text-align: center;
+    background-color: #6ad2e2;
+    padding: 5px;
+    /* margin-right: 5px; */
+    border-radius: 5px; /* 角を丸くする */
+}
+header {
+    background-color: #6ad2e2;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+/* ダンスグローサリー */
 .videoItemsContainer {
     display: flex;
     gap: 10px; /* 各videoItemの間に20pxの間隔を設ける */
     justify-content: center; /* 子要素を中央揃えに */
     align-items: center; /* 子要素の垂直方向の位置を中央揃えに */
-    /* align-items: center; */
-    flex-wrap: wrap; /* 必要に応じて折り返し */
+    flex-wrap: wrap; /*必要に応じて折り返し*/
+
 }
-
-/* .videoItem {
-    /* videoItemのスタイル設定 */
-    /* margin: 10px; 追加で外側の余白を設定する場合 */
-・    /* height: 240px; videoItem の高さを指定 */
-/* } */ 
-
-div{
-    text-align: center;
-    /* display: flex; */
-    /* gap: 20px; 各videoItemの間に20pxの間隔を設ける */
-    /* flex-wrap: wrap; 必要に応じて折り返し */
-}
-
-header {
-    background-color: #007bff;
-    color: white;
-    padding: 20px;
-    text-align: center;
-}
-
-main {
-    padding: 20px;
-}
-
-#choreography-editor {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.dance-move {
-    padding: 10px 20px;
-    background-color: #f0f0f0;
-    border: 2px solid #ddd;
-    border-radius: 5px;
-    cursor: grab;
-}
-
-.dance-move:active {
-    cursor: grabbing;
-}
-
-/* style.css */
-.term button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.term button:hover {
-    background-color: #0056b3;
-}
-
+/* ダンス種類説明文 */
 .description {
     margin-top: 10px;
     padding: 10px;
     background-color: #f0f0f0;
     border-radius: 5px;
 }
+/* アップロードタグ */
+.upload-container {
+    display: flex;
+    justify-content: center; /* 水平方向の中央寄せ */
+    align-items: center; /* 垂直方向の中央寄せ */
+    flex-direction: column; /* 要素を縦方向に並べる */
+    height: 100px; /* コンテナの高さ */
+    gap: 10px; /* inputとbuttonの間隔 */
+  }
+  /* アップロードした動画の配置を横にする */
+  #videosContainer {
+    display: flex;
+    flex-wrap: wrap; /* 要素が多くなった場合に折り返し */
+    gap: 20px; /* 各動画要素の間隔 */
+    justify-content: center; /* 中央寄せ */
+  }
 
+  
+/* 動画を横に表示する */
+#choreography-editor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.dance-move {
+    padding: 10px 10px;
+    background-color: #f0f0f0;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: grab;
+        margin-left: 5px;
+}
+/* ダンス種類タグのリスト */
+.tags {
+    list-style-type: none; /* リストマーカーを非表示にする */
+    padding: 0;
+}
+/* タグ */
+.tags li {
+    display: inline-block; /* タグを横並びに表示 */
+    background-color: #6ad2e2;
+    padding: 5px;
+    margin-right: 5px;
+    border-radius: 5px; /* 角を丸くする */
+}
 footer {
-    background-color: #f2f2f2; /* フッターの背景色 */
-    padding: 20px; /* 内側の余白 */
+    background-color: #6ad2e2; /* フッターの背景色 */
+    padding: 10px; /* 内側の余白 */
+    margin: 10px;
     text-align: center; /* テキストを中央揃え */
 }
 .footer-photo {
     width: 400px; /* 写真の幅 */
     height: auto; /* 高さは自動調整 */
     border-radius: 50%; /* 写真を円形に表示 */
-    margin-bottom: 10px; /* 写真とテキストの間の余白 */
-}
-
-.videoItem {
-    margin-bottom: 20px;
-}
-
-.tags {
-    list-style-type: none; /* リストマーカーを非表示にする */
-    padding: 0;
-}
-
-.tags li {
-    display: inline-block; /* タグを横並びに表示 */
-    background-color: #f0f0f0;
-    padding: 5px;
-    margin-right: 5px;
-    border-radius: 5px; /* 角を丸くする */
 }
