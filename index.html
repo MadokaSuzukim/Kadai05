@@ -43,17 +43,17 @@
                 <button onclick="toggleDescription('Breaking')">Breaking Dance</button>
                 <p id="Breaking" class="description" style="display:none;">
                     一般的に「ブレイクダンス」と呼ばれることが多いですが、BREAKING（ブレイキング）が正式な名前で、BREAKIN'と呼ぶ人も多いです。
-逆立ちで止まったり、頭で回ったりとダイナミックな動きが特徴で、エントリー、フットワーク、パワームーブ、フリーズなどの動きがあります。
-1970年代にニューヨークのサウスブロンクス地区のアフリカ系アメリカ人やラテンアメリカ人の若者たちによって発展しました。
+                    逆立ちで止まったり、頭で回ったりとダイナミックな動きが特徴で、エントリー、フットワーク、パワームーブ、フリーズなどの動きがあります。
+                    1970年代にニューヨークのサウスブロンクス地区のアフリカ系アメリカ人やラテンアメリカ人の若者たちによって発展しました。
                 </p>
             </div>
             <div class="videoItem">
                 <button onclick="toggleDescription('jazzDance')">Jazz Dance</button>
                 <p id="jazzDance" class="description" style="display:none;">
                     ジャズダンスは、主に舞台、映画、ミュージカルなどで踊られるダンスのことを指します。
-テーマパークダンサーが踊ってるのも、ほとんどジャズダンスです。
-体のボディコントロールやポジショニング、ターンなどバレエが基礎であることが特徴です。また、ジャズダンスといっても、クラブジャズ、ストリートジャズ、ジャズファンク、スタイルジャズなど様々な種類があります。
-1920年頃にアメリカで演奏されるようになった「ジャズに合わせて体を動かしていたもの」がジャズダンスの起源とされています。
+                    テーマパークダンサーが踊ってるのも、ほとんどジャズダンスです。
+                    体のボディコントロールやポジショニング、ターンなどバレエが基礎であることが特徴です。また、ジャズダンスといっても、クラブジャズ、ストリートジャズ、ジャズファンク、スタイルジャズなど様々な種類があります。
+                    1920年頃にアメリカで演奏されるようになった「ジャズに合わせて体を動かしていたもの」がジャズダンスの起源とされています。
                 </p>
             </div>
             <div class="videoItem">
@@ -159,43 +159,38 @@
                       </div>
                   </div>
             </div>
-          </div>      
-          <script type="module">
-          import firebaseConfig from "./firebaseAPIkey.js";
-          import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js';
-import { getDatabase, ref as databaseRef, set, push, onValue } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
-// / Firebaseアプリの初期化
-const app = initializeApp(firebaseConfig);
-// Storageサービスの取得
-const storage = getStorage(app);
-// Realtime Databaseサービスの取得
-const db = getDatabase(app);
-// 動画一覧の表示
-function displayVideos() {
-    const videosRef = databaseRef(db, 'videos');
-    onValue(videosRef, (snapshot) => {
+        </div>      
+        <script type="module">
+        import firebaseConfig from "./firebaseAPIkey.js";
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js';
+        import { getDatabase, ref as databaseRef, set, push, onValue } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js';
+        // / Firebaseアプリの初期化
+        const app = initializeApp(firebaseConfig);
+        // Storageサービスの取得
+        const storage = getStorage(app);
+        // Realtime Databaseサービスの取得
+        const db = getDatabase(app);
+        // 動画一覧の表示
+        function displayVideos() {
+        const videosRef = databaseRef(db, 'videos');
+        onValue(videosRef, (snapshot) => {
         const videosContainer = document.getElementById('videosContainer');
         videosContainer.innerHTML = ''; // コンテナをクリア
         snapshot.forEach((childSnapshot) => {
-            const videoData = childSnapshot.val();
-            displayUploadedVideo(videoData.url); // 各動画を表示
+        const videoData = childSnapshot.val();
+        displayUploadedVideo(videoData.url); // 各動画を表示
         });
     });
 }
-
-document.addEventListener('DOMContentLoaded', displayVideos);
-
-
-
+        document.addEventListener('DOMContentLoaded', displayVideos);
         </script>
-          
-
-          <script>// ダンス説明の表示/非表示の切り替え
-            function toggleDescription(termId) {
-                var description = document.getElementById(termId);
-                description.style.display = description.style.display === "none" ? "block" : "none";
-            }
-            </script>
+         <script>
+        // ダンス説明の表示/非表示の切り替え
+        function toggleDescription(termId) {
+        var description = document.getElementById(termId);
+        description.style.display = description.style.display === "none" ? "block" : "none";
+        }
+        </script>
 </body>
 <footer>
     <h2>管理者プロフィール</h2>
