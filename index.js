@@ -1,3 +1,4 @@
+
 import firebaseConfig from "./firebaseAPIkey.js";
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js';
@@ -75,9 +76,3 @@ function displayVideos() {
 
 document.addEventListener('DOMContentLoaded', displayVideos);
 
-
-// ダンス説明の表示/非表示の切り替え
-function toggleDescription(termId) {
-    var description = document.getElementById(termId);
-    description.style.display = description.style.display === "none" ? "block" : "none";
-}
